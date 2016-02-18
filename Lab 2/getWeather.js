@@ -1,12 +1,15 @@
 $(document).ready(function() {
 	/* array to store the forecast in */
-	var forecast = [];
+	forecast = [];
 
 	/* store the city */
 	var city = "";
 
 	var cur_latitude = 0;
 	var cur_longitude = 0;
+
+	api_key = "44db6a862fba0b067b1930da0d769e98";
+  api_key1 = "b19d259d200a7c9cfed68a767a4a3551";
 
 	/* get the current day and the day of the week */
 	var day = new Date();
@@ -50,14 +53,37 @@ function showPosition(position) {
 function displayForecast() {
 	/* create the forecast html from the array */
 	var return_html = "";
+
+  /* store the previous day for the divider line */
+	var previous_day = null;
 	for (var i = 0; i < forecast.length; i++) {
 		/* get the day of the week for the forecast */
-		var weatherDay = (dayOfWeek + i + 1) % 7;
+    weatherDay = new Date(forecast[i].dt_txt);
+		//console.log(weatherDay);
+
+    /* if the previous day is different create divider */
+		if (previous_day != weekday[weatherDay.getDay()]) {
+			return_html += "<hr>";
+		}
 
 		/* create the img and forecast html */
 		return_html += "<li id=forecast-day" + i + ">";
 		return_html += "<img src=http://openweathermap.org/img/w/" + forecast[i].weather[0].icon + ".png></img>";
-		return_html += weekday[weatherDay] + ": " + "H: " + forecast[i].temp.max + " / " + "L: " + forecast[i].temp.min + "</li>";
+		return_html += weekday[weatherDay.getDay()];
+    if (weatherDay.getHours() ==9) {
+      return_html += " Morning";
+    }
+    else if (weatherDay.getHours() == 12) {
+      return_html += " Afternoon";
+    }
+    else if (weatherDay.getHours() == 18) {
+      return_html += " Night";
+    }
+    return_html += ": ";
+    return_html += "H: " + forecast[i].main.temp_max + " &#8457; / " + "L: " + forecast[i].main.temp_min + " &#8457;" + "</li>";
+
+    /* set the previous day */
+		previous_day = weekday[weatherDay.getDay()];
 	}
 
 	/* set the html for the forecast */
@@ -66,14 +92,20 @@ function displayForecast() {
 
 function getForecast(x, y) {
 	/* url to get the weather forecast */
-	var weatherAPI = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" + x + "&lon=" + y + "&appid=44db6a862fba0b067b1930da0d769e98&units=imperial&cnt=5";
+	var weatherAPI = "http://api.openweathermap.org/data/2.5/forecast?lat=" + x + "&lon=" + y + "&appid=" + api_key1 + "&units=imperial";
 
 	/* get the json data from the api for forecast data */
 	$.getJSON(weatherAPI, function(data) {
 		//console.log(data);
 
 		/* store the forecast */
-		forecast = data.list;
+    for (var i = 0; i < data.list.length; i++) {
+      var weatherDay = new Date(data.list[i].dt_txt);
+      //console.log(weatherDay);
+      if (weatherDay.getHours() == 9 || weatherDay.getHours() == 12 || weatherDay.getHours() == 18) {
+        forecast.push(data.list[i]);
+      }
+    }
 
 		/* store the city */
 		city = data.city.name;
@@ -87,14 +119,14 @@ function getForecast(x, y) {
 
 function getWeather(x, y) {
 	/* url to get the current weather */
-	var weatherAPI = "http://api.openweathermap.org/data/2.5/weather?lat=" + x + "&lon=" + y + "&appid=44db6a862fba0b067b1930da0d769e98&units=imperial";
+	var weatherAPI = "http://api.openweathermap.org/data/2.5/weather?lat=" + x + "&lon=" + y + "&appid=" + api_key + "&units=imperial";
 	
 	/* get the json data from the api for current weather */
 	$.getJSON(weatherAPI, function(data) {
 		//console.log(data);
 
 		/* create the html for the current weather */
-		var weather_parsed = "<h3>" + data.main.temp + " &#8457;" + "<span>   </span></h3>" + "H: " + data.main.temp_max + " &#8457;" + " / " + "L: " + data.main.temp_min + " &#8457;";
+		var weather_parsed = "<h3>" + data.main.temp + " &#8457;" + "</h3>" + "H: " + data.main.temp_max + " &#8457;" + " / " + "L: " + data.main.temp_min + " &#8457;";
 		var weather_icon = "<img src=http://openweathermap.org/img/w/" + data.weather[0].icon + ".png></img>" + data.weather[0].description;
 		var wind_icon = "<img id=\"arrow-img\" src=\"arrow.ico\">";
 
