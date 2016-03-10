@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="TwitterAPI">
+  <head>
+    <link rel="icon" href="./favicon.ico">
+    <title>Lab 4</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+
+    <script src="dataHandling.js"</script>
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+
+  </head>
+
+  <body ng-controller="Controller">
+    <div class="container">
+      <div class="page-header">
+        <h1 id="title">Lab 4 - Twitter API</h1>
+      </div>
+
+      <div class="input-group" id="query-div">
+        <input type="text" class="form-control" id="query-input" type="text" name="input" ng-model="input.text">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" id="search" ng-click="search()">Search</button>
+        </span>
+      </div>
+
+      <div>
+        <ul>
+          <li id="tweet-list" ng-repeat="tweet in tweets">
+            <img class="profileImg" src="{{tweet.user.profile_image_url}}"</img>
+            <strong>{{tweet.user.name}}</strong>
+            <br>
+            {{tweet.text}}
+          </li>
+        </ul>
+      </div>
+
+    </div>
+    <footer>
+      <div class="container">
+        <p class="text-muted">Peter Ryder - Web Science Systems Dev</p>
+      </div>
+    </footer>
+  </body>
+</html>
