@@ -1,0 +1,19 @@
+{
+  "name": "quiz1server",
+  "version": "1.0.0",
+  "description": "A webserver for Quiz 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Peter Ryder",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/PeterRyder/ITWS4500"
+  }
+}
