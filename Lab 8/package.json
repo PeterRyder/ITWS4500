@@ -14,5 +14,9 @@
     "ejs": "^2.4.1",
     "express": "^4.13.4",
     "request": "^2.71.0"
+  },
+  "repository": {
+  "type": "git",
+  "url": "git://github.com/PeterRyder/ITWS4500.git"
   }
 }
