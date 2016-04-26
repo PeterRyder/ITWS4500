@@ -67,10 +67,7 @@ io.sockets.on('connection', function(socket) {
         stream responds with "Exception over data cap". This response is in 
         the form of a string and the twitter module tries to parse this string
         as JSON. There is currently an open issue on GitHub about this.
-
-        If the server errors out with Unexpected token E, and this happens
-        after searching for 3 different queries typically. I have created a
-        hotfix which I mention in the README file.
+        I have created a hotfix for this which I mention in the README file.
       */
       stream.on('data', function(tweet) {
         if (tweet.id != null) {
