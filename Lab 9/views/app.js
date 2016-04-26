@@ -16,6 +16,7 @@ var socket = io.connect('http://localhost:3000');
     $scope.KeyPressed = function(event) {
       if (event.charCode == 13) {
         $scope.search();
+        $('#BuildDatabase').prop('disabled', false);
       }
     }
 
@@ -53,21 +54,9 @@ var socket = io.connect('http://localhost:3000');
       socket.emit('build', $scope.tweets);
     };
 
-    $scope.read_tweets = function() {
-      console.log("Reading tweets from database");
-    };
-
-    /* button bound to creating an xml file from the database */
-    $scope.create_xml = function() {
-      console.log("Outputting XML from database");
-
-      /* tell the server we want to create the xml file */
-      socket.emit('output_from_db', $scope.filename);
-    };
-
     /* function which outputs the tweets to either csv or json */
     $scope.output = function() {
-      socket.emit('output', {tweets: $scope.tweets, mode: $scope.selectedItem});
+      socket.emit('output', {mode: $scope.selectedItem, filename: $scope.filename});
       socket.close();
     };
 

@@ -48,8 +48,6 @@ mongoose.model('Tweet', Tweet)
 /* get the tweets model */
 var TweetModel = mongoose.model('Tweet');
 
-console.log("Listening for tweets from Troy by default");
-
 /* keep track of open socket connections */
 var nbOpenSockets = 0;
 
@@ -71,8 +69,8 @@ io.sockets.on('connection', function(socket) {
         as JSON. There is currently an open issue on GitHub about this.
 
         If the server errors out with Unexpected token E, and this happens
-        after searching for 3 different queries typically, this is that error 
-        and there isn't much I can do about it... :(
+        after searching for 3 different queries typically. I have created a
+        hotfix which I mention in the README file.
       */
       stream.on('data', function(tweet) {
         if (tweet.id != null) {
@@ -183,97 +181,63 @@ io.sockets.on('connection', function(socket) {
     }
   });
 
-  socket.on('output_from_db', function(filename) {
-    console.log("Creating xml from database");
-
-    /* get the tweets from the database */
+  socket.on('output', function(data) {
     TweetModel.find(function (err, tweets) {
       if(err) console.log(err);
 
-      /* console.log(tweets); */
-      
-      fs.exists(filename + ".csv", function(exists) {
-        if (!exists) {
-          console.log("File does not exist - will create it");
-        }
+      /* check the output file mode */
+      if (data.mode == "JSON") {
 
-        else {
-          console.log("File exists - will overwrite the file");
-        }
+        /* check if the file exists */
+        fs.exists("json_output.json", function(exists) {
+          if (!exists) {
+            console.log("File does not exist - will create it");
+          }
 
-        /* open the csv file for writing */
-        fs.open(filename + ".csv", "w", function(error, fd) {
+          else {
+            console.log("File exists - will overwrite file");
+          }
           
-          /* function to convert the json tweets into csv */
-          var json2csvCallback = function (err, csv) {
-            if (err) throw err;
+          /* open the file for writing */
+          fs.open(data.filename + ".json", "w", function(error, fd) {
+            console.log("Writing data to file");
 
             /* write the tweets to the file */
-            fs.write(fd, csv);
-          };
+            fs.write(fd, JSON.stringify(tweets, null, 4));
+          });
+        });      
+      }
+      else if (data.mode == "CSV") {
+        /* check if the file exists */
+        fs.exists("csv_output.csv", function(exists) {
+          if (!exists) {
+            console.log("File does not exist - will create it");
+          }
 
-          /* call the converter function */
-          converter.json2csv(tweets, json2csvCallback);
-        
+          else {
+            console.log("File exists - will overwrite file");
+          }
+
+          /* open the file for writing */
+          fs.open(data.filename + ".csv", "w", function(error, fd) {
+            
+            /* callback function to convert to csv */
+            var json2csvCallback = function (err, csv) {
+              if (err) throw err;
+
+              /* write the tweets to the file */
+              fs.write(fd, csv);
+            };
+
+            /* call the converter function */
+            converter.json2csv(tweets, json2csvCallback);
+          
+          });
         });
-      });
+      }
+      else {
+        console.log("Unknown file output");
+      }
     });
-
-  });
-
-  socket.on('output', function(data) {
-    /* check the output file mode */
-    if (data.mode == "JSON") {
-
-      /* check if the file exists */
-      fs.exists("json_output.json", function(exists) {
-        if (!exists) {
-          console.log("File does not exist - will create it");
-        }
-
-        else {
-          console.log("File exists - will overwrite file");
-        }
-        
-        /* open the file for writing */
-        fs.open("json_output.json", "w", function(error, fd) {
-          console.log("Writing data to file");
-
-          /* write the tweets to the file */
-          fs.write(fd, JSON.stringify(data.tweets, null, 4));
-        });
-      });      
-    }
-    else if (data.mode == "CSV") {
-      /* check if the file exists */
-      fs.exists("csv_output.csv", function(exists) {
-        if (!exists) {
-          console.log("File does not exist - will create it");
-        }
-
-        else {
-          console.log("File exists - will overwrite file");
-        }
-
-        /* open the file for writing */
-        fs.open("csv_output.csv", "w", function(error, fd) {
-          
-          /* callback function to convert to csv */
-          var json2csvCallback = function (err, csv) {
-            if (err) throw err;
-
-            /* write the tweets to the file */
-            fs.write(fd, csv);
-          };
-
-          /* call the converter function */
-          converter.json2csv(data.tweets, json2csvCallback);
-        
-        });
-      });
-    }
-    else {
-      console.log("Unknown file output");
-    }
   });
 });
