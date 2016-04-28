@@ -17,10 +17,11 @@ var socket = io.connect('http://localhost:3000');
     /* if the enter key is pressed instead of clicking the search button */
     $scope.KeyPressed = function(event) {
       if (event.charCode == 13) {
-        $scope.search();
-
         /* enable the build database option if the user hits the enter key */
-        $('#BuildDatabase').prop('disabled', false);
+        if ($scope.input.text != "") {
+          $('#BuildDatabase').prop('disabled', false);
+          $scope.search();
+        }
       }
     }
 
