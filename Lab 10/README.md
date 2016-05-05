@@ -1,30 +1,24 @@
 Peter Ryder
-Lab 9
+Lab 10
 
-For the installer portion of this lab, I assume the user has
-installed a MongoDB server and that the MongoD server is running.
-Without it the program will crash because it cannot create a
-connection to the Mongo server. To install the program, simply
-unzip the files and using the command prompt use npm install.
-This will install all necessary packages for the program to
-work. There is a slight issue with the twitter npm package
-which I will explain later.
+This lab builds off the previous lab by adding a visualize
+button to the main page. This button pulls all tweets from
+the database and performs three visualizations on them.
+The first visualization is a timeline of when tweets were
+published. For a small data range this is fairly basic
+but with a large enough dataset this could be very
+intersting. The second visualization is a word cloud of all
+the words used in the tweets gathered from the database.
+Words which appear more frequently are larger in the word
+cloud. Lastly is another word cloud. This word cloud
+represents the username of the tweet with respect to how
+many followers they have. The more followers an account has
+the large their name appears.
 
-After installing, the program is very simple. You can grab
-tweets from the Twitter API using a search field and an
-input for the amount of tweets to get. There is some weirdness
-going on with the twitter API, and the twitter node module would
-crash after receiving 3 queries. I talked about this in previous
-labs. To fix this, I have slightly modified the twitter module
-so that it will not crash. I have forked the npm twitter module
-and slightly modified it so that the server will not crash. The
-changes are very basic, it is just commenting out a couple lines
-and replacing them with a print statement. You can see the changes
-I made here:
+To gather the data, the server pulls the tweets from the
+database. The server then outputs 3 files which the client
+reads to display the tweets.
 
-https://github.com/PeterRyder/node-twitter
-
-This does not change the fact that the twitter API still refuses 
-to stream data to me after making several queries without 
-restarting the server, but I believe this is a rate issue and not 
-something I can fix.
+Like the last lab, the node server expects a MongoDB instance
+to already be running. Simply use 'npm install' to install
+the server and then 'npm start' to start the server.
